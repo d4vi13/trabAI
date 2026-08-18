@@ -82,12 +82,32 @@ def depthFirstSearch(problem: SearchProblem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 
+        """
+    "*** YOUR CODE HERE ***"
+
+    from game import Directions
+    from util import Stack
+
+    frontier = Stack()  
+    solution = []
+
+    frontier.push(problem.getStartState)
+    while not frontier.isEmpty():
+        currentState = frontier.pop()
+
+        if problem.IsGoalState(currentState):
+            return solution
+
+        nextStates = problem.getSuccesors(currentState)
+        for state in nextStates:
+            frontier.push(state[0])
+
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    print("Type :",
+          type(problem.getSuccessors(problem.getStartState())[0]))
+
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
