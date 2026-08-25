@@ -87,32 +87,68 @@ def depthFirstSearch(problem: SearchProblem):
 
     from game import Directions
     from util import Stack
+    from collections import defaultdict
 
     frontier = Stack()  
     solution = []
 
-    frontier.push(problem.getStartState)
-    while not frontier.isEmpty():
-        currentState = frontier.pop()
+    visited = defaultdict(int)
+    path = defaultdict(list) 
 
-        if problem.IsGoalState(currentState):
+    currentState = problem.getStartState()
+
+    frontier.push((currentState, Directions.STOP, 0))
+    while not frontier.isEmpty():
+
+        visited[currentState] = 1 
+
+        if problem.isGoalState(currentState):
             return solution
 
-        nextStates = problem.getSuccesors(currentState)
+        nextStates = problem.getSuccessors(currentState)
         for state in nextStates:
-            frontier.push(state[0])
+            if not visited[state[0]]: 
+                path[state[0]] = solution.copy()
+                path[state[0]].append(state[1])
+                frontier.push(state)
 
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    print("Type :",
-          type(problem.getSuccessors(problem.getStartState())[0]))
-
+        currentState, action, cost = frontier.pop()
+        solution = path[currentState]
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    from util import Queue
+    from collections import defaultdict
+
+    frontier = Queue()  
+    solution = []
+
+    visited = defaultdict(int)
+    path = defaultdict(list) 
+
+    currentState = problem.getStartState()
+    path[currentState] = {Directions.STOP}
+    while True:
+        visited[currentState] = 1 
+
+        if problem.isGoalState(currentState):
+            return solution
+
+        nextStates = problem.getSuccessors(currentState)
+        for state in nextStates:
+            if not path[state[0]]: 
+                path[state[0]] = solution.copy()
+                path[state[0]].append(state[1])
+                frontier.push(state)
+
+        if frontier.isEmpty():
+            break
+
+        currentState, action, cost = frontier.pop()
+        solution = path[currentState]
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
