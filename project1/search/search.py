@@ -82,8 +82,7 @@ def depthFirstSearch(problem: SearchProblem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 
-        """
-    "*** YOUR CODE HERE ***"
+    """
 
     from game import Directions
     from util import Stack
@@ -117,7 +116,6 @@ def depthFirstSearch(problem: SearchProblem):
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
     from game import Directions
     from util import Queue
     from collections import defaultdict
@@ -149,7 +147,6 @@ def breadthFirstSearch(problem: SearchProblem):
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
     from game import Directions
     from util import PriorityQueue
     from collections import defaultdict
@@ -196,8 +193,43 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from game import Directions
+    from util import PriorityQueue
+    from collections import defaultdict
+
+    frontier = PriorityQueue()  
+    solution = []
+    cost = 0
+
+    path = defaultdict(lambda: [[], 0]) 
+
+    currentState = problem.getStartState()
+    path[currentState] = [[Directions.STOP], 0]
+    while True:
+
+        if problem.isGoalState(currentState):
+            return solution
+
+        nextStates = problem.getSuccessors(currentState)
+        for state in nextStates:
+            costToState = cost + state[2] + heuristic(state[0], problem)
+            if path[state[0]] == [[], 0]: 
+                path[state[0]] = [solution.copy(), costToState]
+                path[state[0]][0].append(state[1])
+                frontier.push(state, costToState) 
+            else:
+                oldCost = path[state[0]][1]
+                if oldCost > costToState:
+                    path[state[0]] = [solution.copy(), costToState]
+                    path[state[0]][0].append(state[1])
+                    frontier.update(state, costToState)
+
+        if frontier.isEmpty():
+            break
+
+        currentState, action, currentCost = frontier.pop()
+        solution, cost  = path[currentState]
+
 
 
 # Abbreviations
