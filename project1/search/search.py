@@ -125,14 +125,11 @@ def breadthFirstSearch(problem: SearchProblem):
     frontier = Queue()  
     solution = []
 
-    visited = defaultdict(int)
     path = defaultdict(list) 
 
     currentState = problem.getStartState()
     path[currentState] = {Directions.STOP}
     while True:
-        visited[currentState] = 1 
-
         if problem.isGoalState(currentState):
             return solution
 
