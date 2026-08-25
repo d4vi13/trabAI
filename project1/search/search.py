@@ -212,17 +212,18 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
         nextStates = problem.getSuccessors(currentState)
         for state in nextStates:
-            costToState = cost + state[2] + heuristic(state[0], problem)
+            costToState = cost + state[2]  
+            estimatedCostToGoal = costToState + heuristic(state[0], problem)
             if path[state[0]] == [[], 0]: 
                 path[state[0]] = [solution.copy(), costToState]
                 path[state[0]][0].append(state[1])
-                frontier.push(state, costToState) 
+                frontier.push(state, estimatedCostToGoal) 
             else:
                 oldCost = path[state[0]][1]
                 if oldCost > costToState:
                     path[state[0]] = [solution.copy(), costToState]
                     path[state[0]][0].append(state[1])
-                    frontier.update(state, costToState)
+                    frontier.update(state, estimatedCostToGoal)
 
         if frontier.isEmpty():
             break
