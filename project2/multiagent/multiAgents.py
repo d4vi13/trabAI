@@ -119,35 +119,41 @@ class MultiAgentSearchAgent(Agent):
         self.depth = int(depth)
 
 class MinimaxAgent(MultiAgentSearchAgent):
-    """
-    Your minimax agent (question 2)
-    """
+    def getAction(self, gameState):
+        def minimax(state, depth, agent_idx):
+            if agent_idx == state.getNumAgents():
+                agent_idx = 0
+                depth += 1
 
-    def getAction(self, gameState: GameState):
-        """
-        Returns the minimax action from the current gameState using self.depth
-        and self.evaluationFunction.
+            if depth == self.depth or state.isWin() or state.isLose():
+                return self.evaluationFunction(state), None
 
-        Here are some method calls that might be useful when implementing minimax.
+            actions = state.getLegalActions(agent_idx)
+            if not actions:
+                return self.evaluationFunction(state), None
 
-        gameState.getLegalActions(agentIndex):
-        Returns a list of legal actions for an agent
-        agentIndex=0 means Pacman, ghosts are >= 1
+            if agent_idx == 0:
+                best_score = float('-inf')
+                best_action = None
+                for action in actions:
+                    successor = state.generateSuccessor(agent_idx, action)
+                    score, _ = minimax(successor, depth, agent_idx + 1)
+                    if score > best_score:
+                        best_score, best_action = score, action
+                return best_score, best_action
 
-        gameState.generateSuccessor(agentIndex, action):
-        Returns the successor game state after an agent takes an action
+            else:
+                best_score = float('inf')
+                best_action = None
+                for action in actions:
+                    successor = state.generateSuccessor(agent_idx, action)
+                    score, _ = minimax(successor, depth, agent_idx + 1)
+                    if score < best_score:
+                        best_score, best_action = score, action
+                return best_score, best_action
 
-        gameState.getNumAgents():
-        Returns the total number of agents in the game
-
-        gameState.isWin():
-        Returns whether or not the game state is a winning state
-
-        gameState.isLose():
-        Returns whether or not the game state is a losing state
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        _, action = minimax(gameState, 0, 0)
+        return action
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
