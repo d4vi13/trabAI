@@ -52,8 +52,22 @@ class ReflexAgent(Agent):
 
         return legalMoves[chosenIndex]
 
+    def evaluationFunction(self, currentGameState: GameState, action):
+        """
+        Design a better evaluation function here.
+
+        The evaluation function takes in the current and proposed successor
+        GameStates (pacman.py) and returns a number, where higher numbers are better.
+
+        The code below extracts some useful information from the state, like the
+        remaining food (newFood) and Pacman position after moving (newPos).
+        newScaredTimes holds the number of moves that each ghost will remain
+        scared because of Pacman having eaten a power pellet.
+
+        Print out these variables to see what you're getting, then combine them
+        to create a masterful evaluation function.
+        """
     def evaluationFunction(self, currentGameState, action):
-        # Generate the state that results from taking this action
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
         newFood = successorGameState.getFood()
@@ -73,9 +87,19 @@ class ReflexAgent(Agent):
             minFoodDist = min([manhattanDistance(newPos, food) for food in foodList])
             score += 1.0 / minFoodDist
 
-        return scoredef scoreEvaluationFunction(currentGameState: GameState):
+        return score
 
-    class MultiAgentSearchAgent(Agent):
+def scoreEvaluationFunction(currentGameState: GameState):
+    """
+    This default evaluation function just returns the score of the state.
+    The score is the same one displayed in the Pacman GUI.
+
+    This evaluation function is meant for use with adversarial search agents
+    (not reflex agents).
+    """
+    return currentGameState.getScore()
+
+class MultiAgentSearchAgent(Agent):
     """
     This class provides some common elements to all of your
     multi-agent searchers.  Any methods defined here will be available
