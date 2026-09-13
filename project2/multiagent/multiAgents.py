@@ -156,16 +156,50 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return action
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
-    """
-    Your minimax agent with alpha-beta pruning (question 3)
-    """
+    def getAction(self, gameState):
+        """
+        Returns the minimax action using alpha-beta pruning.
+        """
+        def alpha_beta(state, depth, agent_idx, alpha, beta):
+            if agent_idx == state.getNumAgents():
+                agent_idx = 0
+                depth += 1
 
-    def getAction(self, gameState: GameState):
-        """
-        Returns the minimax action using self.depth and self.evaluationFunction
-        """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+            if depth == self.depth or state.isWin() or state.isLose():
+                return self.evaluationFunction(state), None
+
+            actions = state.getLegalActions(agent_idx)
+            if not actions:
+                return self.evaluationFunction(state), None
+
+            if agent_idx == 0:
+                value = float('-inf')
+                best_action = None
+                for action in actions:
+                    successor = state.generateSuccessor(agent_idx, action)
+                    score, _ = alpha_beta(successor, depth, agent_idx + 1, alpha, beta)
+                    if score > value:
+                        value, best_action = score, action
+                    if value > beta:  # Prune
+                        return value, best_action
+                    alpha = max(alpha, value)
+                return value, best_action
+
+            else:
+                value = float('inf')
+                best_action = None
+                for action in actions:
+                    successor = state.generateSuccessor(agent_idx, action)
+                    score, _ = alpha_beta(successor, depth, agent_idx + 1, alpha, beta)
+                    if score < value:
+                        value, best_action = score, action
+                    if value < alpha:  # Prune
+                        return value, best_action
+                    beta = min(beta, value)
+                return value, best_action
+
+        _, action = alpha_beta(gameState, 0, 0, float('-inf'), float('inf'))
+        return action
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
