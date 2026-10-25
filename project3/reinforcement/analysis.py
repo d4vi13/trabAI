@@ -55,10 +55,12 @@ def question3e():
     return (discount, noise, living)
 
 def question7():
-    answerEpsilon = None
-    answerLearningRate = None
-    return answerEpsilon, answerLearningRate
-    # If not possible, return 'NOT POSSIBLE'
+    ans = 'NOT POSSIBLE'
+    return ans
+
+def question8():
+    ans = 'NOT POSSIBLE'
+    return ans
 
 if __name__ == '__main__':
     print('Answers to analysis questions:')
