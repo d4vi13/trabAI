@@ -124,5 +124,56 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def runValueIteration(self):
-        "*** YOUR CODE HERE ***"
+        preds = {}
+        all_states = self.mdp.getStates()
+        for s in all_states:
+            preds[s] = set()
 
+        for s in all_states:
+            if not self.mdp.isTerminal(s):
+                actions = self.mdp.getPossibleActions(s)
+                for a in actions:
+                    transitions = self.mdp.getTransitionStatesAndProbs(s, a)
+                    for nextState, prob in transitions:
+                        if prob > 0:
+                            preds[nextState].add(s)
+
+        pq = util.PriorityQueue()
+
+        for s in all_states:
+            if not self.mdp.isTerminal(s):
+                actions = self.mdp.getPossibleActions(s)
+                best_q = -999999999
+                for a in actions:
+                    q = self.computeQValueFromValues(s, a)
+                    if q > best_q:
+                        best_q = q
+                diff = abs(self.values[s] - best_q)
+                pq.push(s, -diff)
+
+        for step in range(self.iterations):
+            if pq.isEmpty():
+                break
+
+            s = pq.pop()
+
+            if not self.mdp.isTerminal(s):
+                actions = self.mdp.getPossibleActions(s)
+                best_q = -999999999
+                for a in actions:
+                    q = self.computeQValueFromValues(s, a)
+                    if q > best_q:
+                        best_q = q
+                self.values[s] = best_q
+
+            for p in preds[s]:
+                if not self.mdp.isTerminal(p):
+                    p_actions = self.mdp.getPossibleActions(p)
+                    best_q = -999999999
+                    for a in p_actions:
+                        q = self.computeQValueFromValues(p, a)
+                        if q > best_q:
+                            best_q = q
+                    diff = abs(self.values[p] - best_q)
+                    if diff > self.theta:
+                        pq.update(p, -diff)
